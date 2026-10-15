@@ -20,6 +20,7 @@ import jakarta.servlet.http.HttpServletResponse;
 @EnableWebSecurity
 @EnableMethodSecurity(prePostEnabled = true)
 @RequiredArgsConstructor
+@org.springframework.context.annotation.PropertySource("classpath:platform.properties")
 public class WebSecurityConfig {
 
   private final JwtTokenProvider jwtTokenProvider;
@@ -29,6 +30,7 @@ public class WebSecurityConfig {
     http.csrf(csrf -> csrf.disable());
     http.sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
     http.authorizeHttpRequests(auth -> auth
+        .requestMatchers(org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest.toAnyEndpoint().excluding("scheduledtasks")).permitAll()
         .requestMatchers("/users/signin", "/users/signup", "/users/refresh", "/users/logout").permitAll()
         .requestMatchers("/h2-console/**").permitAll()
         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
